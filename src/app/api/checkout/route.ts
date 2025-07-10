@@ -23,10 +23,11 @@ console.log('🔍 All STRIPE_ vars:',
     .map(k => ({ [k]: process.env[k] }))
 );
 
-const stripe = new Stripe(
-  process.env.STRIPE_SECRET_KEY!,
-  { apiVersion: '2022-11-15' }
-);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  // Remove this line if you want to use the default API version
+  // Or explicitly cast the version as a string:
+  apiVersion: '2022-11-15' as any,
+});
 
 
 
