@@ -35,41 +35,110 @@ export default function Home() {
   }
 
   const plans = [
-    { label: 'Get Started Free', priceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID! },
-    { label: 'Get Basic Plan', priceId: process.env.NEXT_PUBLIC_STRIPE_BASIC_PRICE_ID! },
-    { label: 'Get Premium Plan', priceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID! },
+    {
+      label: 'Get Started Free',
+      priceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID!,
+    },
+    {
+      label: 'Get Basic Plan',
+      priceId: process.env.NEXT_PUBLIC_STRIPE_BASIC_PRICE_ID!,
+    },
+    {
+      label: 'Get Premium Plan',
+      priceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID!,
+    },
   ];
 
   return (
-    <div style={{ backgroundColor: '#f8f8f8', fontFamily: 'Inter, sans-serif', minHeight: '100vh', paddingBottom: '3rem' }}>
+    <div
+      style={{
+        backgroundColor: '#f8f8f8',
+        fontFamily: 'Inter, sans-serif',
+        minHeight: '100vh',
+        paddingBottom: '3rem',
+      }}
+    >
       {/* Brand Title */}
       <div style={{ textAlign: 'center', marginTop: '2rem' }}>
         <h1 style={{ fontSize: '32px', color: '#800080' }}>ATS Impact</h1>
       </div>
 
       {/* Headline and Description */}
-      <h2 style={{ textAlign: 'center', fontSize: '28px', fontWeight: 'bold', marginTop: '40px' }}>
+      <h2
+        style={{
+          textAlign: 'center',
+          fontSize: '28px',
+          fontWeight: 'bold',
+          marginTop: '40px',
+        }}
+      >
         Ready to See How Your Resume Stacks Up?
       </h2>
-      <p style={{ textAlign: 'center', fontSize: '16px', marginBottom: '30px' }}>
-        Select a plan below to get started. You'll receive your results directly by email—fast, secure, and private.
+      <p
+        style={{
+          textAlign: 'center',
+          fontSize: '16px',
+          marginBottom: '30px',
+        }}
+      >
+        Select a plan below to get started. You'll receive your results directly
+        by email—fast, secure, and private.
       </p>
 
       {/* Delivered Securely Image */}
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <img src="/secure-delivery.png" alt="Resume Delivered Securely" style={{ maxWidth: '300px', height: 'auto' }} />
+        <img
+          src="/secure-delivery.png"
+          alt="Resume Delivered Securely"
+          style={{
+            maxWidth: '320px',
+            height: 'auto',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          }}
+        />
       </div>
 
       {/* Plan Description */}
-      <h3 style={{ textAlign: 'center' }}>What's Included in Each Plan</h3>
-      <ul style={{ listStyle: 'none', paddingLeft: 0, textAlign: 'center', marginBottom: '30px' }}>
-        <li><strong>Free:</strong> ATS Resume Score + Suggestions</li>
-        <li><strong>Basic:</strong> Full ATS Resume Analysis + Fixes</li>
-        <li><strong>Premium:</strong> Resume Optimization + Keyword Enhancements</li>
+      <h3
+        style={{
+          textAlign: 'center',
+          fontSize: '20px',
+          marginBottom: '10px',
+        }}
+      >
+        What's Included in Each Plan
+      </h3>
+      <ul
+        style={{
+          listStyle: 'none',
+          paddingLeft: 0,
+          textAlign: 'center',
+          marginBottom: '30px',
+          fontSize: '16px',
+        }}
+      >
+        <li>
+          <strong>Free:</strong> ATS Resume Score + Suggestions
+        </li>
+        <li>
+          <strong>Basic:</strong> Full ATS Resume Analysis + Fixes
+        </li>
+        <li>
+          <strong>Premium:</strong> Resume Optimization + Keyword Enhancements
+        </li>
       </ul>
 
       {/* Buttons */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '50px' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '20px',
+          flexWrap: 'wrap',
+          marginBottom: '50px',
+        }}
+      >
         {plans.map((plan) => (
           <button
             key={plan.label}
@@ -77,7 +146,8 @@ export default function Home() {
             onMouseEnter={() => setHovered(plan.label)}
             onMouseLeave={() => setHovered(null)}
             style={{
-              backgroundColor: hovered === plan.label ? '#FFD700' : '#800080',
+              backgroundColor:
+                hovered === plan.label ? '#FFD700' : '#800080',
               color: hovered === plan.label ? 'black' : 'white',
               padding: '12px 24px',
               border: 'none',
