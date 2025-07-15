@@ -20,39 +20,49 @@ export async function POST(req: Request) {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (err) {
-    console.error('Webhook error:', err);
+    console.error('❌ Webhook error:', err);
     return NextResponse.json({ error: 'Webhook Error' }, { status: 400 });
   }
 
-  // ✅ Only for subscription-based checkouts
+  // ✅ Only handle checkout session completions
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
 
     const email = session.customer_email;
     const subscriptionId = session.subscription as string;
-    let tier = 'basic';
+    let tier = 'free'; // default
 
-    // ✅ Fetch subscription to get pricing info
     if (subscriptionId) {
       try {
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-        const price = subscription.items.data[0].price;
+        const priceId = subscription.items.data[0].price.id;
 
-        // Determine tier by price ID or amount (you can update this to match your premium price ID)
-        if (price.unit_amount && price.unit_amount >= 1000) {
+        // ✅ Match price ID to tier using your environment variables
+        if (priceId === process.env.NEXT_PUBLIC_STRIPE_BASIC_PRICE_ID) {
+          tier = 'basic';
+        } else if (priceId === process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID) {
           tier = 'premium';
+        } else if (priceId === process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID) {
+          tier = 'free';
         }
+
+        console.log(`✅ Matched priceId ${priceId} to tier: ${tier}`);
       } catch (error) {
-        console.error('Error retrieving subscription:', error);
+        console.error('❌ Error retrieving subscription:', error);
       }
     }
 
-    // ✅ Update Supabase user tier by email
+    // ✅ Update or insert user in Supabase
     if (email) {
-     await supabase
-  .from('users')
-  .upsert([{ email: email.toLowerCase(), tier }]);
+      const { error } = await supabase
+        .from('users')
+        .upsert([{ email: email.toLowerCase(), tier }]);
 
+      if (error) {
+        console.error('❌ Supabase error:', error);
+      } else {
+        console.log(`✅ Supabase user updated: ${email} → ${tier}`);
+      }
     }
   }
 
