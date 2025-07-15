@@ -41,9 +41,35 @@ export default function Home() {
   ];
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-      <h1>Choose a Plan</h1>
-      <div style={{ display: 'inline-flex', gap: '1rem', marginTop: '2rem' }}>
+    <div style={{ backgroundColor: '#f8f8f8', fontFamily: 'Inter, sans-serif', minHeight: '100vh', paddingBottom: '3rem' }}>
+      {/* Brand Title */}
+      <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+        <h1 style={{ fontSize: '32px', color: '#800080' }}>ATS Impact</h1>
+      </div>
+
+      {/* Headline and Description */}
+      <h2 style={{ textAlign: 'center', fontSize: '28px', fontWeight: 'bold', marginTop: '40px' }}>
+        Ready to See How Your Resume Stacks Up?
+      </h2>
+      <p style={{ textAlign: 'center', fontSize: '16px', marginBottom: '30px' }}>
+        Select a plan below to get started. You'll receive your results directly by email—fast, secure, and private.
+      </p>
+
+      {/* Delivered Securely Image */}
+      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <img src="/secure-delivery.png" alt="Resume Delivered Securely" style={{ maxWidth: '300px', height: 'auto' }} />
+      </div>
+
+      {/* Plan Description */}
+      <h3 style={{ textAlign: 'center' }}>What's Included in Each Plan</h3>
+      <ul style={{ listStyle: 'none', paddingLeft: 0, textAlign: 'center', marginBottom: '30px' }}>
+        <li><strong>Free:</strong> ATS Resume Score + Suggestions</li>
+        <li><strong>Basic:</strong> Full ATS Resume Analysis + Fixes</li>
+        <li><strong>Premium:</strong> Resume Optimization + Keyword Enhancements</li>
+      </ul>
+
+      {/* Buttons */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '50px' }}>
         {plans.map((plan) => (
           <button
             key={plan.label}
@@ -67,4 +93,3 @@ export default function Home() {
     </div>
   );
 }
-
