@@ -30,10 +30,12 @@ export default function Home() {
       });
 
       if (!res.ok) throw new Error('Checkout failed');
-      const { sessionId } = await res.json();
 
-      // Redirect to Stripe Checkout
-      window.location.href = `https://checkout.stripe.com/pay/${sessionId}`;
+      const { url } = await res.json();
+      if (!url) throw new Error('Missing checkout URL');
+
+      // ✅ Redirect to Stripe Checkout
+      window.location.href = url;
     } catch (error) {
       alert('Something went wrong. Please try again.');
       console.error(error);
