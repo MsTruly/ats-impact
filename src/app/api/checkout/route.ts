@@ -1,10 +1,8 @@
-// src/app/api/checkout/route.ts
-import { NextResponse, NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-06-30.basil' as '2025-06-30.basil', // ✅ match exactly
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +20,7 @@ export async function POST(request: NextRequest) {
       cancel_url: `${request.headers.get('origin')}/cancelled`,
     });
 
-    return NextResponse.json({ url: session.url }); // ✅ Return the checkout URL
+    return NextResponse.json({ url: session.url }); // ✅ Return the URL, not sessionId
   } catch (err: any) {
     console.error('Stripe error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
