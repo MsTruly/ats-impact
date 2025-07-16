@@ -7,15 +7,15 @@ export default function Home() {
   const plans = [
     {
       label: 'Get Started Free',
-      priceId: 'price_1RlDr5RnA80AIx3dY0rSGcE3', // Stripe TEST Price ID for Free Plan
+      priceId: 'price_1RlDr5RnA80AIx3dY0rSGcE3',
     },
     {
       label: 'Get Basic Plan',
-      priceId: 'price_1RijIiRnA80AIx3dIsNnYMQ9', // Stripe TEST Price ID for Basic Plan
+      priceId: 'price_1RijIiRnA80AIx3dIsNnYMQ9',
     },
     {
       label: 'Get Premium Plan',
-      priceId: 'price_1RijJWRnA80AIx3ds8YL4I0d', // Stripe TEST Price ID for Premium Plan
+      priceId: 'price_1RijJWRnA80AIx3ds8YL4I0d',
     },
   ];
 
@@ -30,9 +30,10 @@ export default function Home() {
       });
 
       if (!res.ok) throw new Error('Checkout failed');
+      const { sessionId } = await res.json();
 
-      const { url } = await res.json();
-      window.location.href = url;
+      // Redirect to Stripe Checkout
+      window.location.href = `https://checkout.stripe.com/pay/${sessionId}`;
     } catch (error) {
       alert('Something went wrong. Please try again.');
       console.error(error);
@@ -49,7 +50,6 @@ export default function Home() {
         Select a plan below to get started. You’ll receive your results directly by email—fast, secure, and private.
       </p>
 
-      {/* ✅ Secure Delivery Image */}
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
         <img
           src="/secure-delivery.png"
@@ -63,7 +63,6 @@ export default function Home() {
         />
       </div>
 
-      {/* ✅ Plan Comparison Table */}
       <div style={{ maxWidth: '700px', margin: '0 auto 40px auto' }}>
         <h3 style={{ textAlign: 'center', marginBottom: '15px' }}>
           Choose the Plan That Matches Your Needs
@@ -94,7 +93,6 @@ export default function Home() {
         </table>
       </div>
 
-      {/* ✅ Plan Buttons */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
         {plans.map((plan) => (
           <button
