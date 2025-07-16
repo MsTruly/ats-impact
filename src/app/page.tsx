@@ -4,9 +4,7 @@
 import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function Home() {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -85,10 +83,10 @@ export default function Home() {
         by email—fast, secure, and private.
       </p>
 
-      {/* Delivered Securely Image */}
+      {/* ✅ Delivered Securely Image */}
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
         <img
-          src="/secure-delivery.png."
+          src="/secure-delivery.png.png"
           alt="Resume Delivered Securely"
           style={{
             maxWidth: '320px',
@@ -99,46 +97,8 @@ export default function Home() {
         />
       </div>
 
-      {/* Plan Description */}
-      <h3
-        style={{
-          textAlign: 'center',
-          fontSize: '20px',
-          marginBottom: '10px',
-        }}
-      >
-        What's Included in Each Plan
-      </h3>
-      <ul
-        style={{
-          listStyle: 'none',
-          paddingLeft: 0,
-          textAlign: 'center',
-          marginBottom: '30px',
-          fontSize: '16px',
-        }}
-      >
-        <li>
-          <strong>Free:</strong> ATS Resume Score + Suggestions
-        </li>
-        <li>
-          <strong>Basic:</strong> Full ATS Analysis including Score + Fixes
-        </li>
-        <li>
-          <strong>Premium:</strong> Everything in Basic + Resume Optimization + Cover Letter
-        </li>
-      </ul>
-
       {/* Buttons */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '20px',
-          flexWrap: 'wrap',
-          marginBottom: '50px',
-        }}
-      >
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
         {plans.map((plan) => (
           <button
             key={plan.label}
@@ -146,13 +106,14 @@ export default function Home() {
             onMouseEnter={() => setHovered(plan.label)}
             onMouseLeave={() => setHovered(null)}
             style={{
-              backgroundColor:
-                hovered === plan.label ? '#FFD700' : '#800080',
-              color: hovered === plan.label ? 'black' : 'white',
-              padding: '12px 24px',
-              border: 'none',
-              borderRadius: '6px',
+              padding: '1rem 2rem',
+              backgroundColor: hovered === plan.label ? '#800080' : '#fff',
+              color: hovered === plan.label ? '#fff' : '#800080',
+              border: '2px solid #800080',
+              borderRadius: '8px',
               cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: 'bold',
               transition: 'all 0.3s ease',
             }}
           >
