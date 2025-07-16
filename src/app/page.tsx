@@ -7,26 +7,36 @@ export default function Home() {
   const plans = [
     {
       label: 'Get Started Free',
-      priceId: 'price_1', // Replace with your actual Stripe Price ID
+      priceId: 'price_1RlDr5RnA80AIx3dY0rSGcE3', // Stripe TEST Price ID for Free Plan
     },
     {
       label: 'Get Basic Plan',
-      priceId: 'price_2',
+      priceId: 'price_1RijIiRnA80AIx3dIsNnYMQ9', // Stripe TEST Price ID for Basic Plan
     },
     {
       label: 'Get Premium Plan',
-      priceId: 'price_3',
+      priceId: 'price_1RijJWRnA80AIx3ds8YL4I0d', // Stripe TEST Price ID for Premium Plan
     },
   ];
 
   const handleCheckout = async (priceId: string) => {
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      body: JSON.stringify({ priceId }),
-    });
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ priceId }),
+      });
 
-    const { url } = await res.json();
-    window.location.href = url;
+      if (!res.ok) throw new Error('Checkout failed');
+
+      const { url } = await res.json();
+      window.location.href = url;
+    } catch (error) {
+      alert('Something went wrong. Please try again.');
+      console.error(error);
+    }
   };
 
   return (
@@ -94,8 +104,8 @@ export default function Home() {
               padding: '10px 16px',
               border: '2px solid #800080',
               borderRadius: '5px',
-              backgroundColor: 'white',
-              color: '#800080',
+              backgroundColor: '#800080',
+              color: 'white',
               fontWeight: 'bold',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
@@ -105,8 +115,8 @@ export default function Home() {
               e.currentTarget.style.color = 'white';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = 'white';
-              e.currentTarget.style.color = '#800080';
+              e.currentTarget.style.backgroundColor = '#800080';
+              e.currentTarget.style.color = 'white';
             }}
           >
             {plan.label}
