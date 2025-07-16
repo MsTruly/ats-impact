@@ -3,12 +3,15 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import crypto from 'crypto';
 
-// ✅ Use correct server-side env variables here:
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// ✅ Runtime-safe environment access
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
+if (!supabaseUrl || !supabaseServiceRoleKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 const resend = new Resend(process.env.BREVO_API_KEY);
 
 export async function POST(req: Request) {
@@ -37,8 +40,7 @@ export async function POST(req: Request) {
 
       if (error) throw error;
 
-      // ✅ Use SUPABASE_URL here too, not NEXT_PUBLIC
-      resumeUrl = `https://${process.env.SUPABASE_URL!.replace('https://', '')}/storage/v1/object/public/resumes/submissions/${id}/${file.name}`;
+      resumeUrl = `https://${supabaseUrl.replace('https://', '')}/storage/v1/object/public/resumes/submissions/${id}/${file.name}`;
     }
 
     // ✅ Insert into Supabase DB
