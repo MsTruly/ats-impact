@@ -12,8 +12,8 @@ const resend = new Resend(process.env.BREVO_API_KEY);
 
 export async function POST(req: Request) {
   const formData = await req.formData();
-  const file = formData.get('file') as File | null;
-  const pastedText = formData.get('pastedText') as string | null;
+  const file = formData.get('resumeFile') as File | null;
+  const pastedText = formData.get('resumeText') as string | null;
   const email = formData.get('email') as string | null;
 
   if (!email || (!file && !pastedText)) {
@@ -24,52 +24,46 @@ export async function POST(req: Request) {
   let resumeUrl = '';
 
   try {
-    // 1. Upload file if it exists
+    // Upload to Supabase Storage if file exists
     if (file) {
       const buffer = Buffer.from(await file.arrayBuffer());
       const { data, error } = await supabase.storage
         .from('resumes')
         .upload(`submissions/${id}/${file.name}`, buffer, {
           contentType: file.type,
-          upsert: true,
+          upsert: true
         });
 
       if (error) throw error;
-
-      const { data: publicUrl } = supabase.storage
-        .from('resumes')
-        .getPublicUrl(`submissions/${id}/${file.name}`);
-      resumeUrl = publicUrl.publicUrl;
+      resumeUrl = `https://${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('https://', '')}/storage/v1/object/public/resumes/submissions/${id}/${file.name}`;
     }
 
-    // 2. Insert into Supabase DB
-    const { error: insertError } = await supabase.from('submissions').insert([
-      {
-        id,
-        email,
-        resume_url: resumeUrl,
-        pasted_text: pastedText,
-      },
-    ]);
+    // Insert into Supabase DB
+    const { error: insertError } = await supabase.from('Submissions').insert({
+      id,
+      email,
+      resume_url: resumeUrl || null,
+      pasted_text: pastedText || null
+    });
 
     if (insertError) throw insertError;
 
-    // 3. Send confirmation email
+    // Send email with confirmation
     await resend.emails.send({
-      from: 'ATS Impact <noreply@atsimpact.com>', // Update domain if verified
+      from: 'noreply@atsimpact.com', // Optional: Use your verified sender
       to: email,
-      subject: 'Your resume was received!',
+      subject: 'Resume Received - ATS Impact',
       html: `
-        <p>Thank you for submitting your resume to ATS Impact.</p>
+        <p>Hi,</p>
+        <p>We've successfully received your resume. Thank you for using ATS Impact!</p>
         ${resumeUrl ? `<p><a href="${resumeUrl}">View Uploaded Resume</a></p>` : ''}
-        ${pastedText ? `<p><strong>Text Submitted:</strong><br>${pastedText}</p>` : ''}
-        <p>We’ll analyze it and get back to you shortly.</p>
-      `,
+        <p>We’ll be in touch soon with your ATS report.</p>
+      `
     });
 
-    return NextResponse.json({ message: 'Resume submitted successfully' }, { status: 200 });
+    return NextResponse.json({ success: true });
   } catch (err: any) {
-    console.error('Submission error:', err);
-    return NextResponse.json({ error: 'Submission failed' }, { status: 500 });
+    console.error('Submission Error:', err.message);
+    return NextResponse.json({ error: err.message || 'Something went wrong' }, { status: 500 });
   }
 }
