@@ -88,7 +88,7 @@ export default function Home() {
       {/* Delivered Securely Image */}
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
         <img
-          src="/secure-delivery.png.png"
+          src="/secure-delivery.png."
           alt="Resume Delivered Securely"
           style={{
             maxWidth: '320px',
