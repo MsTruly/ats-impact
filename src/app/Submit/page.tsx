@@ -3,6 +3,7 @@
 import { useState } from 'react'
 
 export default function ResumeSubmitPage() {
+  const [email, setEmail] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [pastedText, setPastedText] = useState('')
   const [submitStatus, setSubmitStatus] = useState('')
@@ -18,13 +19,14 @@ export default function ResumeSubmitPage() {
     setSubmitStatus('Uploading...')
 
     const formData = new FormData()
+    formData.append('email', email)
 
     if (file) {
-      formData.append('resumeFile', file)
+      formData.append('file', file)
     }
 
     if (pastedText.trim()) {
-      formData.append('resumeText', pastedText)
+      formData.append('pastedText', pastedText)
     }
 
     const response = await fetch('/api/submit', {
@@ -45,6 +47,18 @@ export default function ResumeSubmitPage() {
     <div style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}>
       <h2>Submit Your Resume</h2>
       <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Your Email:</label><br />
+          <input
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+            style={{ width: '100%', padding: '8px' }}
+          />
+        </div>
+
         <div>
           <label>Upload Resume (PDF or DOCX):</label><br />
           <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} />
