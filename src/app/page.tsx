@@ -30,11 +30,7 @@ export default function Home() {
       });
 
       if (!res.ok) throw new Error('Checkout failed');
-
       const { url } = await res.json();
-      if (!url) throw new Error('Missing checkout URL');
-
-      // ✅ Redirect to Stripe Checkout
       window.location.href = url;
     } catch (error) {
       alert('Something went wrong. Please try again.');
@@ -87,9 +83,7 @@ export default function Home() {
             </tr>
             <tr>
               <td style={{ padding: '10px' }}>👜 Premium</td>
-              <td style={{ padding: '10px' }}>
-                Basic + Complete Resume Optimization + Keyword Enhancement & Cover Letter
-              </td>
+              <td style={{ padding: '10px' }}>Basic + Complete Resume Optimization + Keyword Enhancement & Cover Letter</td>
             </tr>
           </tbody>
         </table>
