@@ -88,7 +88,7 @@ export default function Home() {
       {/* Delivered Securely Image */}
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
         <img
-          src="/secure-delivery.png"
+          src="/secure-delivery.png.png"
           alt="Resume Delivered Securely"
           style={{
             maxWidth: '320px',
@@ -122,10 +122,10 @@ export default function Home() {
           <strong>Free:</strong> ATS Resume Score + Suggestions
         </li>
         <li>
-          <strong>Basic:</strong> Full ATS Resume Analysis + Fixes
+          <strong>Basic:</strong> Full ATS Analysis including Score + Fixes
         </li>
         <li>
-          <strong>Premium:</strong> Resume Optimization + Keyword Enhancements
+          <strong>Premium:</strong> Everything in Basic + Resume Optimization + Cover Letter
         </li>
       </ul>
 
