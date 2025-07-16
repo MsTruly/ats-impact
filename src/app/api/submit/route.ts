@@ -3,8 +3,9 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import crypto from 'crypto';
 
+// ✅ Use correct server-side env variables here:
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
   let resumeUrl = '';
 
   try {
-    // Upload to Supabase Storage if file exists
+    // ✅ Upload to Supabase Storage if file exists
     if (file) {
       const buffer = Buffer.from(await file.arrayBuffer());
       const { data, error } = await supabase.storage
@@ -35,10 +36,12 @@ export async function POST(req: Request) {
         });
 
       if (error) throw error;
-      resumeUrl = `https://${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('https://', '')}/storage/v1/object/public/resumes/submissions/${id}/${file.name}`;
+
+      // ✅ Use SUPABASE_URL here too, not NEXT_PUBLIC
+      resumeUrl = `https://${process.env.SUPABASE_URL!.replace('https://', '')}/storage/v1/object/public/resumes/submissions/${id}/${file.name}`;
     }
 
-    // Insert into Supabase DB
+    // ✅ Insert into Supabase DB
     const { error: insertError } = await supabase.from('Submissions').insert({
       id,
       email,
@@ -48,9 +51,9 @@ export async function POST(req: Request) {
 
     if (insertError) throw insertError;
 
-    // Send email with confirmation
+    // ✅ Send confirmation email
     await resend.emails.send({
-      from: 'noreply@atsimpact.com', // Optional: Use your verified sender
+      from: 'noreply@atsimpact.com',
       to: email,
       subject: 'Resume Received - ATS Impact',
       html: `
