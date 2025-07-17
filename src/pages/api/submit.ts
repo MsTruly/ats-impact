@@ -24,7 +24,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const form = formidable({ multiples: false });
 
-  form.parse(req, async (err, fields, files) => {
+  form.parse(req, async (err: any, fields: formidable.Fields, files: formidable.Files) => {
+
     if (err) {
       console.error('❌ Form parse error:', err);
       return res.status(500).json({ error: 'Form parse failed' });
