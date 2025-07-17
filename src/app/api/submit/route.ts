@@ -13,6 +13,13 @@ const supabaseServiceRoleKey =
   process.env.SUPABASE_KEY ||
   '';
 
+// ✅ TEMP DEBUG LOGS (remove after fixing)
+console.log('SUPABASE_URL:', supabaseUrl);
+console.log(
+  'SUPABASE_SERVICE_ROLE_KEY:',
+  supabaseServiceRoleKey ? 'Loaded ✅' : 'Missing ❌'
+);
+
 if (!supabaseUrl || !supabaseServiceRoleKey) {
   throw new Error('Missing Supabase environment variables');
 }
