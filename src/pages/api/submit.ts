@@ -15,6 +15,7 @@ const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
+
 const resend = new Resend(process.env.BREVO_API_KEY!);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -22,7 +23,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const form = formidable({ multiples: false });
+  const form = formidable({
+    multiples: false,
+    maxFileSize: 10 * 1024 * 1024, // ✅ Limit file size to 10MB
+  });
 
   form.parse(req, async (err: any, fields: formidable.Fields, files: formidable.Files) => {
     if (err) {
@@ -42,7 +46,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let resumeUrl = '';
 
     try {
-      // ✅ Upload file if exists and has filepath
       if (file && file.filepath) {
         try {
           const fileBuffer = fs.readFileSync(file.filepath);
@@ -65,7 +68,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      // ✅ Save submission
       const { error: dbError } = await supabase.from('Submissions').insert({
         id,
         email,
@@ -75,7 +77,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       if (dbError) throw dbError;
 
-      // ✅ Email confirmation
       await resend.emails.send({
         from: 'noreply@atsimpact.com',
         to: email,
