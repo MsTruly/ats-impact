@@ -3,6 +3,9 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import crypto from 'crypto';
 
+// ✅ Mark this route as dynamic to access runtime env vars
+export const dynamic = 'force-dynamic';
+
 // ✅ Environment fallback logic
 const supabaseUrl =
   process.env.SUPABASE_URL ||
