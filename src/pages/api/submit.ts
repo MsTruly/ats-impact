@@ -25,7 +25,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const form = formidable({ multiples: false });
 
   form.parse(req, async (err: any, fields: formidable.Fields, files: formidable.Files) => {
-
     if (err) {
       console.error('❌ Form parse error:', err);
       return res.status(500).json({ error: 'Form parse failed' });
@@ -43,22 +42,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let resumeUrl = '';
 
     try {
-      // ✅ Upload file if exists
-      if (file) {
-        const fileBuffer = fs.readFileSync(file.filepath);
-        const { error } = await supabase.storage
-          .from('resumes')
-          .upload(`submissions/${id}/${file.originalFilename}`, fileBuffer, {
-            contentType: file.mimetype || 'application/octet-stream',
-            upsert: true,
-          });
+      // ✅ Upload file if exists and has filepath
+      if (file && file.filepath) {
+        try {
+          const fileBuffer = fs.readFileSync(file.filepath);
+          const { error } = await supabase.storage
+            .from('resumes')
+            .upload(`submissions/${id}/${file.originalFilename}`, fileBuffer, {
+              contentType: file.mimetype || 'application/octet-stream',
+              upsert: true,
+            });
 
-        if (error) throw error;
+          if (error) throw error;
 
-        resumeUrl = `https://${process.env.SUPABASE_URL!.replace(
-          'https://',
-          ''
-        )}/storage/v1/object/public/resumes/submissions/${id}/${file.originalFilename}`;
+          resumeUrl = `https://${process.env.SUPABASE_URL!.replace(
+            'https://',
+            ''
+          )}/storage/v1/object/public/resumes/submissions/${id}/${file.originalFilename}`;
+        } catch (uploadError) {
+          console.error('File upload error:', uploadError);
+          return res.status(500).json({ error: 'File upload failed' });
+        }
       }
 
       // ✅ Save submission
