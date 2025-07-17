@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "build": "node test-env.js && next build",
-  // ... other scripts
-}
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
     "@stripe/stripe-js": "^7.4.0",
     "@supabase/supabase-js": "^2.50.3",
