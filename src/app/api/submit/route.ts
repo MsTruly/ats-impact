@@ -10,7 +10,9 @@ const supabaseUrl =
   process.env.SUPABASE_URL ||
   process.env.NEXT_PUBLIC_SUPABASE_URL ||
   '';
+
 const supabaseServiceRoleKey =
+  process.env.NEXT_PRIVATE_SUPABASE_SERVICE_ROLE_KEY || // 👈 NEW recommended key
   process.env.SUPABASE_SERVICE_ROLE_KEY ||
   process.env.SUPABASE_KEY ||
   '';
@@ -26,6 +28,7 @@ if (!supabaseUrl || !supabaseServiceRoleKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
+// ✅ Supabase + Resend clients
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 const resend = new Resend(process.env.BREVO_API_KEY);
 
@@ -43,6 +46,7 @@ export async function POST(req: Request) {
   let resumeUrl = '';
 
   try {
+    // ✅ Upload file to Supabase Storage
     if (file) {
       const buffer = Buffer.from(await file.arrayBuffer());
       const { error } = await supabase.storage
@@ -60,6 +64,7 @@ export async function POST(req: Request) {
       )}/storage/v1/object/public/resumes/submissions/${id}/${file.name}`;
     }
 
+    // ✅ Save metadata to DB
     const { error: insertError } = await supabase.from('Submissions').insert({
       id,
       email,
@@ -69,6 +74,7 @@ export async function POST(req: Request) {
 
     if (insertError) throw insertError;
 
+    // ✅ Email user confirmation
     await resend.emails.send({
       from: 'noreply@atsimpact.com',
       to: email,
