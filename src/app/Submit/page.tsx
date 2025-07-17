@@ -4,13 +4,13 @@ import { useState } from 'react'
 
 export default function ResumeSubmitPage() {
   const [email, setEmail] = useState('')
-  const [file, setFile] = useState<File | null>(null)
+  const [resumeFile, setResumeFile] = useState<File | null>(null)
   const [pastedText, setPastedText] = useState('')
   const [submitStatus, setSubmitStatus] = useState('')
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0])
+      setResumeFile(e.target.files[0])
     }
   }
 
@@ -21,8 +21,8 @@ export default function ResumeSubmitPage() {
     const formData = new FormData()
     formData.append('email', email)
 
-    if (file) {
-      formData.append('file', file)
+    if (resumeFile) {
+      formData.append('resume', resumeFile) // ✅ correct field name
     }
 
     if (pastedText.trim()) {
@@ -38,6 +38,9 @@ export default function ResumeSubmitPage() {
 
     if (response.ok) {
       setSubmitStatus('✅ Resume submitted successfully!')
+      setEmail('')
+      setResumeFile(null)
+      setPastedText('')
     } else {
       setSubmitStatus(`❌ Error: ${result.error}`)
     }
