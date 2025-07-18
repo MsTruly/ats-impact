@@ -93,7 +93,13 @@ export default function Home() {
         {plans.map((plan) => (
           <button
             key={plan.label}
-            onClick={() => handleCheckout(plan.priceId)}
+            onClick={() => {
+              if (plan.label === 'Get Started Free') {
+                window.location.href = '/submit'; // 👈 go directly to submit form
+              } else {
+                handleCheckout(plan.priceId); // 👈 paid plans go to Stripe
+              }
+            }}
             style={{
               padding: '10px 16px',
               border: '2px solid #800080',
