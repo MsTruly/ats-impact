@@ -1,55 +1,43 @@
 // src/app/api/submit/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
-import formidable from 'formidable';
 import { createClient } from '@supabase/supabase-js';
-import fs from 'fs';
-import path from 'path';
+import formidable from 'formidable';
+import { Readable } from 'stream';
+import fs from 'fs/promises';
 import axios from 'axios';
 
-// Disables Next.js default body parsing (required for file uploads)
 export const config = {
-  api: { bodyParser: false }
+  api: {
+    bodyParser: false,
+  },
 };
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || ''
 );
 
 export async function POST(req: NextRequest) {
-  if (req.method !== 'POST') {
-    return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
-  }
-
   try {
-    // Parse form using formidable
-    const form = formidable({ multiples: false });
-    const fieldsAndFiles = await new Promise<{ fields: formidable.Fields; files: formidable.Files }>((resolve, reject) => {
-      form.parse(req as any, (err, fields, files) => {
-        if (err) reject(err);
-        else resolve({ fields, files });
-      });
-    });
+    // Parse the form data (we'll use formidable)
+    const formData = await req.formData();
+    const email = formData.get('email');
+    const file = formData.get('resume'); // File or null
 
-    const fields = fieldsAndFiles.fields;
-    const files = fieldsAndFiles.files;
-
-    const email = Array.isArray(fields.email) ? fields.email[0] : fields.email || '';
-    const pastedText = Array.isArray(fields.pastedText) ? fields.pastedText[0] : fields.pastedText || '';
     let resumeUrl = null;
 
-    if (files.resume) {
-      const resumeFile = Array.isArray(files.resume) ? files.resume[0] : files.resume;
-      const filePath = resumeFile.filepath;
-      const fileBuffer = fs.readFileSync(filePath);
-      const fileExt = path.extname(resumeFile.originalFilename || '.pdf');
-      const fileName = `${Date.now()}_${resumeFile.newFilename}${fileExt}`;
+    if (file && typeof file === 'object') {
+      // @ts-ignore
+      const arrayBuffer = await file.arrayBuffer();
+      // @ts-ignore
+      const buffer = Buffer.from(arrayBuffer);
 
+      const fileName = `${Date.now()}_${file.name}`;
       const { error } = await supabase.storage
         .from('resumes')
-        .upload(fileName, fileBuffer, {
-          contentType: resumeFile.mimetype || 'application/pdf',
+        .upload(fileName, buffer, {
+          contentType: file.type,
         });
 
       if (error) {
@@ -60,11 +48,10 @@ export async function POST(req: NextRequest) {
       resumeUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/resumes/${fileName}`;
     }
 
-    // Save to Supabase
+    // Save submission to Supabase table
     const { error: dbError } = await supabase.from('Submissions').insert([
       {
         email,
-        pasted_text: pastedText,
         resume_url: resumeUrl,
       },
     ]);
@@ -75,7 +62,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Send notification email via Brevo
-    const brevoResponse = await axios.post(
+    await axios.post(
       'https://api.brevo.com/v3/smtp/email',
       {
         sender: { name: 'ATS Impact', email: 'cs@atsimpact.com' },
@@ -96,11 +83,10 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    console.log('✅ Brevo email sent:', brevoResponse.data);
-
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ Submit handler error:', error);
     return NextResponse.json({ error: 'Submission failed' }, { status: 500 });
   }
 }
+
