@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link'; // ✅ Add this import
 
 export default function Home() {
   const router = useRouter();
@@ -10,7 +11,7 @@ export default function Home() {
   const plans = [
     {
       label: 'Get Started Free',
-      action: () => router.push('/submit'),
+      link: '/submit', // ✅ Instead of action()
     },
     {
       label: 'Get Basic Plan',
@@ -23,9 +24,7 @@ export default function Home() {
   ];
 
   const handlePlanClick = async (plan: any) => {
-    if (plan.action) {
-      plan.action(); // Direct to /submit for Free plan
-    } else {
+    if (plan.priceId) {
       try {
         const res = await fetch('/api/checkout', {
           method: 'POST',
@@ -98,30 +97,57 @@ export default function Home() {
 
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
         {plans.map((plan) => (
-          <button
-            key={plan.label}
-            onClick={() => handlePlanClick(plan)}
-            style={{
-              padding: '10px 16px',
-              border: '2px solid #800080',
-              borderRadius: '5px',
-              backgroundColor: '#800080',
-              color: 'white',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#C5A100';
-              e.currentTarget.style.color = 'white';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = '#800080';
-              e.currentTarget.style.color = 'white';
-            }}
-          >
-            {plan.label}
-          </button>
+          plan.link ? (
+            <Link key={plan.label} href={plan.link}>
+              <button
+                style={{
+                  padding: '10px 16px',
+                  border: '2px solid #800080',
+                  borderRadius: '5px',
+                  backgroundColor: '#800080',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#C5A100';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#800080';
+                  e.currentTarget.style.color = 'white';
+                }}
+              >
+                {plan.label}
+              </button>
+            </Link>
+          ) : (
+            <button
+              key={plan.label}
+              onClick={() => handlePlanClick(plan)}
+              style={{
+                padding: '10px 16px',
+                border: '2px solid #800080',
+                borderRadius: '5px',
+                backgroundColor: '#800080',
+                color: 'white',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#C5A100';
+                e.currentTarget.style.color = 'white';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = '#800080';
+                e.currentTarget.style.color = 'white';
+              }}
+            >
+              {plan.label}
+            </button>
+          )
         ))}
       </div>
     </main>
