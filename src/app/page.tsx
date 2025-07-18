@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link'; // ✅ Add this import
+import Link from 'next/link';
 
 export default function Home() {
   const router = useRouter();
@@ -11,7 +11,7 @@ export default function Home() {
   const plans = [
     {
       label: 'Get Started Free',
-      link: '/submit', // ✅ Instead of action()
+      link: '/submit', // ✅ Navigates to /submit
     },
     {
       label: 'Get Basic Plan',
@@ -89,14 +89,16 @@ export default function Home() {
             </tr>
             <tr>
               <td style={{ padding: '10px' }}>👜 Premium</td>
-              <td style={{ padding: '10px' }}>Basic + Complete Resume Optimization + Keyword Enhancement & Cover Letter</td>
+              <td style={{ padding: '10px' }}>
+                Basic + Complete Resume Optimization + Keyword Enhancement & Cover Letter
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-        {plans.map((plan) => (
+        {plans.map((plan) =>
           plan.link ? (
             <Link key={plan.label} href={plan.link}>
               <button
@@ -148,7 +150,7 @@ export default function Home() {
               {plan.label}
             </button>
           )
-        ))}
+        )}
       </div>
     </main>
   );
