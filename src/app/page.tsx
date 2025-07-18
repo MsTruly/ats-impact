@@ -2,12 +2,15 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+
   const plans = [
     {
       label: 'Get Started Free',
-      priceId: 'price_1RlDr5RnA80AIx3dY0rSGcE3',
+      action: () => router.push('/submit'),
     },
     {
       label: 'Get Basic Plan',
@@ -19,22 +22,26 @@ export default function Home() {
     },
   ];
 
-  const handleCheckout = async (priceId: string) => {
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ priceId }),
-      });
+  const handlePlanClick = async (plan: any) => {
+    if (plan.action) {
+      plan.action(); // Direct to /submit for Free plan
+    } else {
+      try {
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ priceId: plan.priceId }),
+        });
 
-      if (!res.ok) throw new Error('Checkout failed');
-      const { url } = await res.json();
-      window.location.href = url;
-    } catch (error) {
-      alert('Something went wrong. Please try again.');
-      console.error(error);
+        if (!res.ok) throw new Error('Checkout failed');
+        const { url } = await res.json();
+        window.location.href = url;
+      } catch (error) {
+        alert('Something went wrong. Please try again.');
+        console.error(error);
+      }
     }
   };
 
@@ -93,13 +100,7 @@ export default function Home() {
         {plans.map((plan) => (
           <button
             key={plan.label}
-            onClick={() => {
-              if (plan.label === 'Get Started Free') {
-                window.location.href = '/submit'; // 👈 go directly to submit form
-              } else {
-                handleCheckout(plan.priceId); // 👈 paid plans go to Stripe
-              }
-            }}
+            onClick={() => handlePlanClick(plan)}
             style={{
               padding: '10px 16px',
               border: '2px solid #800080',
